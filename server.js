@@ -16,12 +16,6 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-function init() {
-    console.log(timeStamp);
-};
-
-init();
-
 app.get("/api/notes", function (req, res) {
 
     // Use the fs module to read the file
@@ -107,11 +101,11 @@ app.delete("/api/notes/:id", function (req, res) {
             res.json(stringifyNotesFiltered);
         });
 
-
+        
+        // Return a success message.
         console.log("Success. Your Note was deleted.");
     });
 
-    // Return a success message.
 
 })
 
