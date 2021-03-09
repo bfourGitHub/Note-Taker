@@ -43,7 +43,7 @@ app.post("/api/notes", function (req, res) {
 
     // Access the POSTed data in `req.body` add an id to post
     var addNewNote = req.body
-    addNewNote.id = timeStamp();
+    addNewNote.id = timeStamp;
 
     // Use the fs module to read the file
     fs.readFile(path.join(__dirname + "/db/db.json"), function (err, data) {
@@ -75,18 +75,41 @@ app.post("/api/notes", function (req, res) {
 app.delete("/api/notes/:id", function (req, res) {
 
     // Access the :id from the `req.params.id`
-
+    var noteToDelete = req.params.id;
+    
     // Use the fs module to read the file
+    fs.readFile(path.join(__dirname + "/db/db.json"), function (err, data) {
+        if (err) {
+            throw err;
+        };
+        // THEN parse the file contents with json.parse() to get the real data
+        var listOfNotes = JSON.parse(data);
+        
+        // Option A
+        // Find the matching index using .findIndex()
+        // Remove the target element using .splice()
+        
+        // Option B
+        // Use the Array.filter() method to filter out the matching element
+        var listOfNotesFilter = listOfNotes.filter((note) => {
+            return note.id != noteToDelete
+        });
 
-    // THEN parse the file contents with json.parse() to get the real data
+        var stringifyNotesFiltered = JSON.stringify(listOfNotesFilter);
+        // myarray = myarray.filter( element => element.id !== req.params.id );
+        //arrayOfNotes = arrayOfNotes.filter( element => element.id !== req.params.id );
 
-    // Option A
-    // Find the matching index using .findIndex()
-    // Remove the target element using .splice()
+        //reWRITE the file without the filtered note
+        fs.writeFile(path.join(__dirname + "/db/db.json"), stringifyNotesFiltered, function (err) {
+            if (err) {
+                throw err;
+            };
+            res.json(stringifyNotesFiltered);
+        });
 
-    // Option B
-    // Use the Array.filter() method to filter out the matching element
-    // myarray = myarray.filter( element => element.id !== req.params.id );
+
+        console.log("Success. Your Note was deleted.");
+    });
 
     // Return a success message.
 
